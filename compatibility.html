@@ -1,0 +1,168 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><title> Node.js API for the JVM</title><meta name="viewport" content="width=device-width, initial-scale=1.0"><style type="text/css">body (
+  padding-top: 60px;
+)</style><link rel="stylesheet" type="text/css" href="/stylesheets/styles.css"><link rel="icon" type="image/x-icon" href="/favicon.ico"><!-- [if lt IE 9]<script type="text/javascript" src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>--><script type="text/javascript" src="https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js"></script></head><body><div class="navbar navbar-fixed-top"><div class="navbar-inner"><div class="container"><ul class="nav"><li><a href="/" class="brand">Nodyn</a></li><li><a href="http://github.com/nodyn/nodyn">Source</a></li><li><a href="http://github.com/nodyn/nodyn/issues">Issues</a></li><li><a href="http://github.com/nodyn/nodyn/wiki">Wiki</a></li><li><a href="/compatibility">Node.js API Compatibility</a></li><li><a href="http://travis-ci.org/nodyn/nodyn"><img src="https://secure.travis-ci.org/nodyn/nodyn.png" alt="Travis-CI Build Status"></a></li></ul></div></div></div><div class="container"><h2>Nodyn Completion of the Node.js API</h2><p>The Node.js API is fairly large, and some of it is really very specific to
+the fact that Node.js is built in C and thus dependent on system level
+functionality. The system level addons are an obvious example of this. Since
+Nodyn is written in Java and thus freed from the binary shackles of the
+Operating System, some of the stuff in Node.js just doesn&#39;t make sense
+in Nodyn.</p>
+<p>This document is an attempt to clarify what bits of the Node.js API are
+available in Nodyn and to identify any workarounds as necessary.</p>
+<p>In some cases, we&#39;ve copied the Node.js javascript files as-is. When the Node.js
+source is dependent only on Javascript bits, and nothing in the C bindings,
+there&#39;s no need to rewrite it all. In other cases, where Node.js depends on
+C bindings, we&#39;ve got our own spin on things with the vert.x engine or even
+just plain old Java code.</p>
+<div class="api"><h3>Assert</h3><ul>
+<li>Node.js reference <a href="http://nodejs.org/api/assert.html">http://nodejs.org/api/assert.html</a></li>
+</ul>
+<p>Complete. All functions should behave as expected. A direct copy of Node.js
+source code.</p>
+</div><div class="api"><h3>Buffer</h3><ul>
+<li>Node.js reference <a href="http://nodejs.org/api/buffer.html">http://nodejs.org/api/buffer.html</a></li>
+</ul>
+</div><div class="api"><h3>C Addons</h3><ul>
+<li>Node.js reference <a href="http://nodejs.org/api/addons.html">http://nodejs.org/api/addons.html</a></li>
+</ul>
+<p>Not applicable. Extensions to Nodyn can be written in Java, Javascript, JRuby,
+Python or any other language supported by vert.x.</p>
+</div><div class="api"><h3>Child Processes</h3><ul>
+<li>Node.js reference <a href="http://nodejs.org/api/child_process.html">http://nodejs.org/api/child_process.html</a></li>
+</ul>
+<p>Deferred. Since Nodyn runs on the JVM, any implementation we provide will not
+be actually spawning new process. It will instead probably use the Vert.x
+platform APIs to simulate <code>fork()</code> and <code>spawn()</code>.</p>
+</div><div class="api"><h3>Cluster</h3><ul>
+<li>Node.js reference <a href="http://nodejs.org/api/cluster.html">http://nodejs.org/api/cluster.html</a></li>
+</ul>
+<p>Node.js clustering is not networked clustering, but rather running multiple
+instances of a Node.js app on a single machine in order to take advantage
+of the processor cores available on that machine. This API will likely be
+implemented with the Vert.x platform API, similar to Child Processes.</p>
+<p>Networked clustering, which Node.js does not provide an API for, is handled
+in Nodyn through vert.x builtin clustering, which itself uses
+<a href="http://www.hazelcast.com/">hazelcast</a> for the implementation. Vert.x
+does not yet expose clustering data or an API.</p>
+</div><div class="api"><h3>Crypto</h3><ul>
+<li>Node.js reference <a href="http://nodejs.org/api/crypto.html">http://nodejs.org/api/crypto.html</a></li>
+</ul>
+<p>In progress. <a href="https://github.com/nodyn/nodyn/issues/24">https://github.com/nodyn/nodyn/issues/24</a></p>
+</div><div class="api"><h3>Debugger</h3><ul>
+<li>Node.js reference <a href="http://nodejs.org/api/debugger.html">http://nodejs.org/api/debugger.html</a></li>
+</ul>
+<p>Work not started.</p>
+</div><div class="api"><h3>DNS</h3><ul>
+<li>Node.js reference <a href="http://nodejs.org/api/dns.html">http://nodejs.org/api/dns.html</a></li>
+</ul>
+<p>Full compatability complete.</p>
+</div><div class="api"><h3>Domain</h3><ul>
+<li>Node.js reference <a href="http://nodejs.org/api/domain.html">http://nodejs.org/api/domain.html</a></li>
+</ul>
+<p>Incomplete. (Node.js stability index 1)</p>
+</div><div class="api"><h3>Events</h3><ul>
+<li>Node.js reference <a href="http://nodejs.org/api/events.html">http://nodejs.org/api/events.html</a></li>
+</ul>
+<p>Complete. A direct copy of Node.js source code.</p>
+</div><div class="api"><h3>File System</h3><ul>
+<li>Node.js reference <a href="http://nodejs.org/api/fs.html">http://nodejs.org/api/fs.html</a></li>
+</ul>
+<p>In progress <a href="https://github.com/nodyn/nodyn/issues/26">https://github.com/nodyn/nodyn/issues/26</a></p>
+</div><div class="api"><h3>Globals</h3><ul>
+<li>Node.js reference <a href="http://nodejs.org/api/globals.html">http://nodejs.org/api/globals.html</a></li>
+</ul>
+<p>Mostly complete.</p>
+</div><div class="api"><h3>HTTP</h3><ul>
+<li>Node.js reference <a href="http://nodejs.org/api/http.html">http://nodejs.org/api/http.html</a></li>
+</ul>
+<p>Complete, except for http.Agent and other issues noted in the compatibility doc.</p>
+</div><div class="api"><h3>HTTPS</h3><ul>
+<li>Node.js reference <a href="http://nodejs.org/api/https.html">http://nodejs.org/api/https.html</a></li>
+</ul>
+<p>Work not started.</p>
+</div><div class="api"><h3>Modules</h3><ul>
+<li>Node.js reference <a href="http://nodejs.org/api/modules.html">http://nodejs.org/api/modules.html</a></li>
+</ul>
+<p>Complete <a href="https://github.com/projectodd/jvm-npm">https://github.com/projectodd/jvm-npm</a></p>
+</div><div class="api"><h3>Net</h3><ul>
+<li>Node.js reference <a href="http://nodejs.org/api/net.html">http://nodejs.org/api/net.html</a></li>
+</ul>
+<p>Partially complete. See the compatibility doc for details.</p>
+</div><div class="api"><h3>OS</h3><ul>
+<li>Node.js reference <a href="http://nodejs.org/api/os.html">http://nodejs.org/api/os.html</a></li>
+</ul>
+<p>Incomplete. Some functions are currently stubbed.</p>
+</div><div class="api"><h3>Path</h3><ul>
+<li>Node.js reference <a href="http://nodejs.org/api/path.html">http://nodejs.org/api/path.html</a></li>
+</ul>
+<p>Complete. All functions should behave as expected.</p>
+</div><div class="api"><h3>Process</h3><ul>
+<li>Node.js reference <a href="http://nodejs.org/api/process.html">http://nodejs.org/api/process.html</a></li>
+</ul>
+<p>Incomplete</p>
+</div><div class="api"><h3>Punycode</h3><ul>
+<li>Node.js reference <a href="http://nodejs.org/api/punycode.html">http://nodejs.org/api/punycode.html</a></li>
+</ul>
+<p>Complete. All functions should behave as expected.</p>
+</div><div class="api"><h3>Query Strings</h3><ul>
+<li>Node.js reference <a href="http://nodejs.org/api/querystring.html">http://nodejs.org/api/querystring.html</a></li>
+</ul>
+<p>Complete. All functions should behave as expected.</p>
+</div><div class="api"><h3>Readline</h3><ul>
+<li>Node.js reference <a href="http://nodejs.org/api/readline.html">http://nodejs.org/api/readline.html</a></li>
+</ul>
+<p>Work not started.</p>
+</div><div class="api"><h3>REPL</h3><ul>
+<li>Node.js reference <a href="http://nodejs.org/api/repl.html">http://nodejs.org/api/repl.html</a></li>
+</ul>
+<p>Work not started.</p>
+</div><div class="api"><h3>STDIO</h3><ul>
+<li>Node.js reference <a href="http://nodejs.org/api/stdio.html">http://nodejs.org/api/stdio.html</a></li>
+</ul>
+<p>Complete. All functions should behave as expected.</p>
+</div><div class="api"><h3>Streams</h3><ul>
+<li>Node.js reference <a href="http://nodejs.org/api/stream.html">http://nodejs.org/api/stream.html</a></li>
+</ul>
+<p>Complete. A direct copy of Node.js source code.</p>
+</div><div class="api"><h3>String Decoder</h3><ul>
+<li>Node.js reference <a href="http://nodejs.org/api/string_decoder.html">http://nodejs.org/api/string_decoder.html</a></li>
+</ul>
+<p>Complete. A direct copy of Node.js source code.</p>
+</div><div class="api"><h3>Timers</h3><ul>
+<li>Node.js reference <a href="http://nodejs.org/api/timers.html">http://nodejs.org/api/timers.html</a></li>
+</ul>
+<p>Complete.</p>
+</div><div class="api"><h3>TLS/SSL</h3><ul>
+<li>Node.js reference <a href="http://nodejs.org/api/tls.html">http://nodejs.org/api/tls.html</a></li>
+</ul>
+<p>Work not started. <a href="https://github.com/nodyn/nodyn/issues/29">https://github.com/nodyn/nodyn/issues/29</a></p>
+</div><div class="api"><h3>TTY</h3><ul>
+<li>Node.js reference <a href="http://nodejs.org/api/tty.html">http://nodejs.org/api/tty.html</a></li>
+</ul>
+<p>Partially complete <a href="https://github.com/nodyn/nodyn/issues/36">https://github.com/nodyn/nodyn/issues/36</a></p>
+</div><div class="api"><h3>UDP/Datagram</h3><ul>
+<li>Node.js reference <a href="http://nodejs.org/api/dgram.html">http://nodejs.org/api/dgram.html</a></li>
+</ul>
+<p>Complete <a href="http://github.com/projectodd/nodyn/issues/30">http://github.com/projectodd/nodyn/issues/30</a></p>
+</div><div class="api"><h3>URL</h3><ul>
+<li>Node.js reference <a href="http://nodejs.org/api/url.html">http://nodejs.org/api/url.html</a></li>
+</ul>
+<p>Complete. All functions should behave as expected.</p>
+</div><div class="api"><h3>Utilities</h3><ul>
+<li>Node.js reference <a href="http://nodejs.org/api/util.html">http://nodejs.org/api/util.html</a></li>
+</ul>
+<p>Complete. Modified copy of Node.js source code.</p>
+</div><div class="api"><h3>VM</h3><ul>
+<li>Node.js reference <a href="http://nodejs.org/api/vm.html">http://nodejs.org/api/vm.html</a></li>
+</ul>
+<p>Work not started.</p>
+</div><div class="api"><h3>ZLIB</h3><ul>
+<li><a href="http://nodejs.org/api/zlib.html">http://nodejs.org/api/zlib.html</a></li>
+</ul>
+<p>Work not started, but probably irrelevant given the platform differences.</p>
+</div></div><div class="container"><footer class="well">&copy; Red Hat, Inc. 2013-2014</footer></div><script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-40480843-1', 'nodyn.io');
+ga('send', 'pageview');</script></body></html>
